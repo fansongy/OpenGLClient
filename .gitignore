@@ -27,3 +27,8 @@
 *.exe
 *.out
 *.app
+OpenGLClient/Debug/
+OpenGLClient/OpenGLClient/Debug/
+OpenGLClient/OpenGLClient.opensdf
+OpenGLClient/OpenGLClient.sdf
+OpenGLClient/OpenGLClient.v11.suo
