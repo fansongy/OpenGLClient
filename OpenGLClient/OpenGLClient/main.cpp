@@ -29,6 +29,7 @@ struct ShaderData
 	GLint posLocation,colorLoacation,MLocation,VLocation,PLocation;
 	glm::mat4 projection;
 	GLuint vbo;
+	GLuint ibo;
 };
 
 float identify[] = {
@@ -108,8 +109,13 @@ void VFRender()
 	glEnableVertexAttribArray(s_shaderData.colorLoacation);
 	glVertexAttribPointer(s_shaderData.colorLoacation,3,GL_FLOAT,GL_FALSE,sizeof(Vertex),(void*)(sizeof(float)*3)); 
 
-	glDrawArrays(GL_TRIANGLES,0,3);
+	//glDrawArrays(GL_TRIANGLES,0,3);
+
 	glBindBuffer(GL_ARRAY_BUFFER,0);
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,s_shaderData.ibo);
+	glDrawElements(GL_TRIANGLES,3,GL_UNSIGNED_INT,0);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,0);
 	glUseProgram(0);
 }
 
@@ -161,6 +167,13 @@ void VFPrepare()
 	glBufferData(GL_ARRAY_BUFFER,sizeof(Vertex)*3,vertex,GL_STATIC_DRAW);
 	glBindBuffer(GL_ARRAY_BUFFER,0);
 
+	//add ibo
+	unsigned int indexs[] = {0,1,2};
+	glGenBuffers(1,&s_shaderData.ibo);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,s_shaderData.ibo);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER,sizeof(unsigned int)*3,indexs,GL_STATIC_DRAW);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,0);
+
 }
 
 /////////////      Constant Pipline     ////////////////////////////////
@@ -205,7 +218,7 @@ void PrepareForGL(HWND hwnd)
 	{
 		VFPrepare();
 	}
-	glClearColor(41.0/255.0f,71.0f/255.0f,121.0f/255.0f,1.0f);
+	glClearColor(41.0f/255.0f,71.0f/255.0f,121.0f/255.0f,1.0f);
 
 	if(s_pipline == ConstPipline){
 		ConstantPrepare();
