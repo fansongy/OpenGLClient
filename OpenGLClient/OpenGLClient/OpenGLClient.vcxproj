@@ -58,6 +58,9 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <PostBuildEvent>
+      <Command>editbin /subsystem:console $(OutDir)$(ProjectName).exe</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -78,6 +81,16 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="misc.cpp" />
+    <ClCompile Include="model.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="misc.h" />
+    <ClInclude Include="model.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="res\shader\draw.fs" />
+    <None Include="res\shader\draw.vs" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

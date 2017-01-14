@@ -5,6 +5,8 @@
 #include <stdio.h>
 #include "Glm/glm.hpp"
 #include "Glm/ext.hpp"
+#include "misc.h"
+#include "model.h"
 
 #pragma comment(lib,"opengl32.lib")
 #pragma comment(lib,"glu32.lib")
@@ -17,19 +19,13 @@ const int VFPipline = 2;
 //int s_pipline = ConstPipline;
 int s_pipline = VFPipline;
 
-struct  Vertex
-{
-	float pos[3];
-	float color[4];
-};
-
-
 struct ShaderData
 {
-	GLint posLocation,colorLoacation,MLocation,VLocation,PLocation;
+	GLint posLocation,texcoordLocation,normalLocation,MLocation,VLocation,PLocation;
 	glm::mat4 projection;
 	GLuint vbo;
 	GLuint ibo;
+	size_t indexCount;
 };
 
 float identify[] = {
@@ -43,22 +39,6 @@ GLuint s_program;
 ShaderData s_shaderData;
 
 ///////////////   UITL    /////////////////////////////////////////////
-char *LoadFileContent(const char* path){
-	FILE *pFile =fopen(path,"rb");
-	if(pFile)
-	{
-		fseek(pFile,0,FILE_END);
-		int nLen = ftell(pFile);
-		char *buffer = new char[nLen+1];
-		rewind(pFile);
-		fread(buffer,nLen,1,pFile);
-		buffer[nLen] = '\0';
-		fclose(pFile);
-		return buffer;
-	}
-	fclose(pFile);
-	return nullptr;
-}
 
 
 GLuint CreateGPUProgram(const char* vsShaderPath,const char* fsShaderPath)
@@ -99,22 +79,26 @@ GLuint CreateGPUProgram(const char* vsShaderPath,const char* fsShaderPath)
 void VFRender()
 {
 	glUseProgram(s_program);
-	glUniformMatrix4fv(s_shaderData.MLocation,1,GL_FALSE,identify);
+	
+	glm::mat4 model = glm::translate(0.0f,0.0f,-2.0f);
+	glUniformMatrix4fv(s_shaderData.MLocation,1,GL_FALSE,glm::value_ptr(model));
 	glUniformMatrix4fv(s_shaderData.VLocation,1,GL_FALSE,identify);
 	glUniformMatrix4fv(s_shaderData.PLocation,1,GL_FALSE,glm::value_ptr(s_shaderData.projection));
 
 	glBindBuffer(GL_ARRAY_BUFFER,s_shaderData.vbo);
 	glEnableVertexAttribArray(s_shaderData.posLocation);
-	glVertexAttribPointer(s_shaderData.posLocation,3,GL_FLOAT,GL_FALSE,sizeof(Vertex),nullptr); 
-	glEnableVertexAttribArray(s_shaderData.colorLoacation);
-	glVertexAttribPointer(s_shaderData.colorLoacation,3,GL_FLOAT,GL_FALSE,sizeof(Vertex),(void*)(sizeof(float)*3)); 
+	glVertexAttribPointer(s_shaderData.posLocation,3,GL_FLOAT,GL_FALSE,sizeof(VertexData),nullptr); 
+	glEnableVertexAttribArray(s_shaderData.texcoordLocation);
+	glVertexAttribPointer(s_shaderData.texcoordLocation,2,GL_FLOAT,GL_FALSE,sizeof(VertexData),(void*)(sizeof(float)*3)); 
+	glEnableVertexAttribArray(s_shaderData.normalLocation);
+	glVertexAttribPointer(s_shaderData.normalLocation,3,GL_FLOAT,GL_FALSE,sizeof(VertexData),(void*)(sizeof(float)*5)); 
 
 	//glDrawArrays(GL_TRIANGLES,0,3);
 
 	glBindBuffer(GL_ARRAY_BUFFER,0);
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,s_shaderData.ibo);
-	glDrawElements(GL_TRIANGLES,3,GL_UNSIGNED_INT,0);
+	glDrawElements(GL_TRIANGLES,s_shaderData.indexCount,GL_UNSIGNED_INT,0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,0);
 	glUseProgram(0);
 }
@@ -122,12 +106,13 @@ void VFRender()
 void VFPrepare()
 {
 	glewInit();
-	s_program = CreateGPUProgram("draw.vs","draw.fs");
+	s_program = CreateGPUProgram("res/shader/draw.vs","res/shader/draw.fs");
 	
 
 	//Get Attribute in shader
 	s_shaderData.posLocation = glGetAttribLocation(s_program,"pos");
-	s_shaderData.colorLoacation = glGetAttribLocation(s_program,"color");
+	s_shaderData.texcoordLocation = glGetAttribLocation(s_program,"texcoord");
+	s_shaderData.normalLocation = glGetAttribLocation(s_program,"normal");
 
 	//Get uniform in shader
 	s_shaderData.MLocation = glGetUniformLocation(s_program,"M");
@@ -136,44 +121,23 @@ void VFPrepare()
 
 	s_shaderData.projection =glm::perspective(45.0f,800.0f/600.0f,0.1f,1000.0f);
 	
-	Vertex vertex[3];
-	vertex[0].pos[0] = 0;
-	vertex[0].pos[1] = 0;
-	vertex[0].pos[2] = -100;
-	vertex[0].color[0] = 1.0f;
-	vertex[0].color[1] = 1.0f;
-	vertex[0].color[2] = 1.0f;
-	vertex[0].color[3] = 1.0f;
+	//load obj model
+	unsigned int * indexes = nullptr;
+	int vertexCount = 0,indexCount = 0;
+	VertexData* vertexes = LoadObjModel("res/model/Quad.obj",&indexes,vertexCount,indexCount);
 
-	vertex[1].pos[0] = 10;
-	vertex[1].pos[1] = 0;
-	vertex[1].pos[2] = -100;
-	vertex[1].color[0] = 1.0f;
-	vertex[1].color[1] = 1.0f;
-	vertex[1].color[2] = 1.0f;
-	vertex[1].color[3] = 1.0f;
-
-	vertex[2].pos[0] = 0;
-	vertex[2].pos[1] = 10;
-	vertex[2].pos[2] = -100;
-	vertex[2].color[0] = 1.0f;
-	vertex[2].color[1] = 1.0f;
-	vertex[2].color[2] = 1.0f;
-	vertex[2].color[3] = 1.0f;
-
+	if(vertexes == nullptr)
+	{
+		printf("Load Model Fail\n");
+	}
 	//send vbo to GPU
-	glGenBuffers(1,&s_shaderData.vbo);
-	glBindBuffer(GL_ARRAY_BUFFER,s_shaderData.vbo);
-	glBufferData(GL_ARRAY_BUFFER,sizeof(Vertex)*3,vertex,GL_STATIC_DRAW);
-	glBindBuffer(GL_ARRAY_BUFFER,0);
+	s_shaderData.vbo = CreateBufferObject(GL_ARRAY_BUFFER,sizeof(VertexData)*vertexCount,GL_STATIC_DRAW,vertexes);
 
 	//add ibo
-	unsigned int indexs[] = {0,1,2};
-	glGenBuffers(1,&s_shaderData.ibo);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,s_shaderData.ibo);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER,sizeof(unsigned int)*3,indexs,GL_STATIC_DRAW);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,0);
+	s_shaderData.ibo = CreateBufferObject(GL_ELEMENT_ARRAY_BUFFER,sizeof(unsigned int)*indexCount,GL_STATIC_DRAW,indexes);
 
+	s_shaderData.indexCount = indexCount;
+	printf("vertex count %d index count %d\n",vertexCount,indexCount);
 }
 
 /////////////      Constant Pipline     ////////////////////////////////
