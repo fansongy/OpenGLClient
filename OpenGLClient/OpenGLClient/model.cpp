@@ -46,41 +46,41 @@ VertexData* LoadObjModel(const char* path,unsigned int **indexes,int &vertexCoun
 					if (szOneLine[1] == 't')
 					{
 						//coord
-						printf("texcoord %s\n",szOneLine);
+						//printf("texcoord %s\n",szOneLine);
 						ssOneLine>>temp;
 						VertexInfo vi ;
 						ssOneLine>>vi.v[0];
 						ssOneLine>>vi.v[1];
 						texcoord.push_back(vi);
-						printf("%s %f %f \n",temp.c_str(),vi.v[0],vi.v[1]);
+						//printf("%s %f %f \n",temp.c_str(),vi.v[0],vi.v[1]);
 					} 
 					else if(szOneLine[1] == 'n')
 					{
 						//normal
-						printf("normal %s\n",szOneLine);
+						//printf("normal %s\n",szOneLine);
 						ssOneLine>>temp;
 						VertexInfo vi ;
 						ssOneLine>>vi.v[0];
 						ssOneLine>>vi.v[1];
 						ssOneLine>>vi.v[2];
 						normals.push_back(vi);
-						printf("%s %f %f %f\n",temp.c_str(),vi.v[0],vi.v[1],vi.v[2]);
+						//printf("%s %f %f %f\n",temp.c_str(),vi.v[0],vi.v[1],vi.v[2]);
 					}
 					else
 					{
 						//position
-						printf("position %s\n",szOneLine);
+						//printf("position %s\n",szOneLine);
 						ssOneLine>>temp;
 						VertexInfo vi ;
 						ssOneLine>>vi.v[0];
 						ssOneLine>>vi.v[1];
 						ssOneLine>>vi.v[2];
 						position.push_back(vi);
-						printf("%s %f %f %f\n",temp.c_str(),vi.v[0],vi.v[1],vi.v[2]);
+						//printf("%s %f %f %f\n",temp.c_str(),vi.v[0],vi.v[1],vi.v[2]);
 					}
 				}
 				else if(szOneLine[0] == 'f'){
-					printf("face %s\n",szOneLine);
+					//printf("face %s\n",szOneLine);
 					ssOneLine>>temp;
 					std::string vertexStr;
 					for (int i = 0;i<3;++i)

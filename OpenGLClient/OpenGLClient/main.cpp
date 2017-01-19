@@ -38,49 +38,13 @@ float identify[] = {
 GLuint s_program;
 ShaderData s_shaderData;
 
-///////////////   UITL    /////////////////////////////////////////////
-
-
-GLuint CreateGPUProgram(const char* vsShaderPath,const char* fsShaderPath)
-{
-	GLuint vsShader = glCreateShader(GL_VERTEX_SHADER);
-	GLuint fsShader = glCreateShader(GL_FRAGMENT_SHADER);
-
-	//Load
-	const char* vsCode = LoadFileContent(vsShaderPath);
-	const char* fsCode = LoadFileContent(fsShaderPath);
-
-	//Compile
-	glShaderSource(vsShader,1,&vsCode,nullptr);
-	glShaderSource(fsShader,1,&fsCode,nullptr);
-	glCompileShader(vsShader);
-	glCompileShader(fsShader);
-
-	//Attach
-	GLuint program = glCreateProgram();
-	glAttachShader(program,vsShader);
-	glAttachShader(program,fsShader);
-
-	//Link
-	glLinkProgram(program);
-
-	//Clear
-	glDetachShader(program,vsShader);
-	glDetachShader(program,fsShader);
-	glDeleteShader(vsShader);
-	glDeleteShader(fsShader);
-
-	return program;
-}
-
-
 /////////////      VF Pipline     ////////////////////////////////
 
 void VFRender()
 {
 	glUseProgram(s_program);
 	
-	glm::mat4 model = glm::translate(0.0f,0.0f,-2.0f);
+	glm::mat4 model = glm::translate(0.0f,-0.5f,-4.0f)*glm::rotate(-90.0f,0.0f,1.0f,0.0f)*glm::scale(0.01f,0.01f,0.01f);
 	glUniformMatrix4fv(s_shaderData.MLocation,1,GL_FALSE,glm::value_ptr(model));
 	glUniformMatrix4fv(s_shaderData.VLocation,1,GL_FALSE,identify);
 	glUniformMatrix4fv(s_shaderData.PLocation,1,GL_FALSE,glm::value_ptr(s_shaderData.projection));
@@ -92,8 +56,6 @@ void VFRender()
 	glVertexAttribPointer(s_shaderData.texcoordLocation,2,GL_FLOAT,GL_FALSE,sizeof(VertexData),(void*)(sizeof(float)*3)); 
 	glEnableVertexAttribArray(s_shaderData.normalLocation);
 	glVertexAttribPointer(s_shaderData.normalLocation,3,GL_FLOAT,GL_FALSE,sizeof(VertexData),(void*)(sizeof(float)*5)); 
-
-	//glDrawArrays(GL_TRIANGLES,0,3);
 
 	glBindBuffer(GL_ARRAY_BUFFER,0);
 
@@ -124,7 +86,7 @@ void VFPrepare()
 	//load obj model
 	unsigned int * indexes = nullptr;
 	int vertexCount = 0,indexCount = 0;
-	VertexData* vertexes = LoadObjModel("res/model/Quad.obj",&indexes,vertexCount,indexCount);
+	VertexData* vertexes = LoadObjModel("res/model/niutou.obj",&indexes,vertexCount,indexCount);
 
 	if(vertexes == nullptr)
 	{
@@ -182,7 +144,7 @@ void PrepareForGL(HWND hwnd)
 	{
 		VFPrepare();
 	}
-	glClearColor(41.0f/255.0f,71.0f/255.0f,121.0f/255.0f,1.0f);
+	glClearColor(0.0f,0.0f,0.0f,1.0f);
 
 	if(s_pipline == ConstPipline){
 		ConstantPrepare();
