@@ -21,10 +21,12 @@ int s_pipline = VFPipline;
 
 struct ShaderData
 {
-	GLint posLocation,texcoordLocation,normalLocation,MLocation,VLocation,PLocation;
+	GLint posLocation,texcoordLocation,normalLocation,MLocation,VLocation,PLocation,NMLocation,TextureLocation;
 	glm::mat4 projection;
+	glm::mat4 model;
 	GLuint vbo;
 	GLuint ibo;
+	GLuint mainTexture;
 	size_t indexCount;
 };
 
@@ -42,12 +44,17 @@ ShaderData s_shaderData;
 
 void VFRender()
 {
+
 	glUseProgram(s_program);
 	
-	glm::mat4 model = glm::translate(0.0f,-0.5f,-4.0f)*glm::rotate(-90.0f,0.0f,1.0f,0.0f)*glm::scale(0.01f,0.01f,0.01f);
-	glUniformMatrix4fv(s_shaderData.MLocation,1,GL_FALSE,glm::value_ptr(model));
+	glm::mat4 normalMatrix = glm::inverseTranspose(s_shaderData.model);
+	glUniformMatrix4fv(s_shaderData.MLocation,1,GL_FALSE,glm::value_ptr(s_shaderData.model));
 	glUniformMatrix4fv(s_shaderData.VLocation,1,GL_FALSE,identify);
 	glUniformMatrix4fv(s_shaderData.PLocation,1,GL_FALSE,glm::value_ptr(s_shaderData.projection));
+	glUniformMatrix4fv(s_shaderData.NMLocation,1,GL_FALSE,glm::value_ptr(normalMatrix));
+	
+	glBindTexture(GL_TEXTURE_2D,s_shaderData.mainTexture);
+	glUniform1i(s_shaderData.TextureLocation,0);
 
 	glBindBuffer(GL_ARRAY_BUFFER,s_shaderData.vbo);
 	glEnableVertexAttribArray(s_shaderData.posLocation);
@@ -80,13 +87,16 @@ void VFPrepare()
 	s_shaderData.MLocation = glGetUniformLocation(s_program,"M");
 	s_shaderData.VLocation = glGetUniformLocation(s_program,"V");
 	s_shaderData.PLocation = glGetUniformLocation(s_program,"P");
+	s_shaderData.NMLocation = glGetUniformLocation(s_program,"NM");
+	s_shaderData.TextureLocation = glGetUniformLocation(s_program,"U_MainTexture");
 
+	s_shaderData.model = glm::translate(0.0f,0.0f,-4.0f);
 	s_shaderData.projection =glm::perspective(45.0f,800.0f/600.0f,0.1f,1000.0f);
 	
 	//load obj model
 	unsigned int * indexes = nullptr;
 	int vertexCount = 0,indexCount = 0;
-	VertexData* vertexes = LoadObjModel("res/model/niutou.obj",&indexes,vertexCount,indexCount);
+	VertexData* vertexes = LoadObjModel("res/model/Sphere.obj",&indexes,vertexCount,indexCount);
 
 	if(vertexes == nullptr)
 	{
@@ -97,6 +107,8 @@ void VFPrepare()
 
 	//add ibo
 	s_shaderData.ibo = CreateBufferObject(GL_ELEMENT_ARRAY_BUFFER,sizeof(unsigned int)*indexCount,GL_STATIC_DRAW,indexes);
+	// texture
+	s_shaderData.mainTexture = CreateTextureFromFile("res/texture/150001.dds");
 
 	s_shaderData.indexCount = indexCount;
 	printf("vertex count %d index count %d\n",vertexCount,indexCount);
@@ -140,12 +152,17 @@ void PrepareForGL(HWND hwnd)
 	
 	HGLRC rc = wglCreateContext(dc);
 	wglMakeCurrent(dc,rc);
+	
+	glClearColor(0.1f,0.4f,0.7f,1.0f);
+	glEnable(GL_DEPTH_TEST);
+
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
+
 	if (s_pipline == VFPipline)
 	{
 		VFPrepare();
 	}
-	glClearColor(0.0f,0.0f,0.0f,1.0f);
-
 	if(s_pipline == ConstPipline){
 		ConstantPrepare();
 	}
@@ -190,6 +207,7 @@ INT WINAPI WinMain( _In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
 	UpdateWindow(hwnd);
 
 	MSG msg;
+	float angle = 0.0f;
 
 	while (true)
 	{
@@ -203,7 +221,12 @@ INT WINAPI WinMain( _In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
 		}
-		glClear(GL_COLOR_BUFFER_BIT);
+		angle +=1.0f;
+		if(angle >360.0f){
+			angle =0;
+		}
+		s_shaderData.model = glm::translate(0.0f,0.0f,-4.0f)*glm::rotate(angle,0.0f,1.0f,0.0f);
+		glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
 		if(s_pipline == ConstPipline){
 			ConstantRenderGL();
 		}
