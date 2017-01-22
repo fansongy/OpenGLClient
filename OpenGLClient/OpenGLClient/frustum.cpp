@@ -58,8 +58,8 @@ void Frustum::Draw(float *M,float* V,float *P)
 	glUniformMatrix4fv(mPLocation, 1, GL_FALSE, P);
 
 	glBindBuffer(GL_ARRAY_BUFFER, mVBO);
-	glEnableVertexAttribArray(mPLocation);
-	glVertexAttribPointer(mPLocation, 3, GL_FLOAT, GL_FALSE, sizeof(float)*3, (void*)0);
+	glEnableVertexAttribArray(mPosLocation);
+	glVertexAttribPointer(mPosLocation, 3, GL_FLOAT, GL_FALSE, sizeof(float)*3, (void*)0);
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mIBO);
