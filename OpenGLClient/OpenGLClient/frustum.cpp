@@ -35,10 +35,10 @@ void Frustum::InitPerspective(float fov,float aspect ,float zNear,float zFar)
 		xNear,yNear,-zNear,
 		-xNear,yNear,-zNear,
 
-		-xNear,-yNear,-zNear,
-		xNear,-yNear,-zNear,
-		xNear,yNear,-zNear,
-		-xNear,yNear,-zNear,
+		-xFar,-yFar,-zFar,
+		xFar,-yFar,-zFar,
+		xFar,yFar,-zFar,
+		-xFar,yFar,-zFar,
 	};
 
 	mVBO = CreateBufferObject(GL_ARRAY_BUFFER,sizeof(float)*24,GL_STATIC_DRAW,vertexs);
