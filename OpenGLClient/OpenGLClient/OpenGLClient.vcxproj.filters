@@ -24,6 +24,12 @@
     <ClCompile Include="model.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="timer.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="frustum.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="misc.h">
@@ -32,12 +38,36 @@
     <ClInclude Include="model.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="timer.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="frustum.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="res\shader\draw.fs">
       <Filter>源文件</Filter>
     </None>
     <None Include="res\shader\draw.vs">
+      <Filter>源文件</Filter>
+    </None>
+    <None Include="res\shader\UI.fs">
+      <Filter>源文件</Filter>
+    </None>
+    <None Include="res\shader\UI.vs">
+      <Filter>源文件</Filter>
+    </None>
+    <None Include="res\shader\PointSprite.vs">
+      <Filter>源文件</Filter>
+    </None>
+    <None Include="res\shader\PointSprite.fs">
+      <Filter>源文件</Filter>
+    </None>
+    <None Include="res\shader\WhiteColor.vs">
+      <Filter>源文件</Filter>
+    </None>
+    <None Include="res\shader\WhiteColor.fs">
       <Filter>源文件</Filter>
     </None>
   </ItemGroup>

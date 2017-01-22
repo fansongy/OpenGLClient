@@ -80,17 +80,27 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="frustum.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="misc.cpp" />
     <ClCompile Include="model.cpp" />
+    <ClCompile Include="timer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="frustum.h" />
     <ClInclude Include="misc.h" />
     <ClInclude Include="model.h" />
+    <ClInclude Include="timer.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="res\shader\draw.fs" />
     <None Include="res\shader\draw.vs" />
+    <None Include="res\shader\PointSprite.fs" />
+    <None Include="res\shader\PointSprite.vs" />
+    <None Include="res\shader\UI.fs" />
+    <None Include="res\shader\UI.vs" />
+    <None Include="res\shader\WhiteColor.fs" />
+    <None Include="res\shader\WhiteColor.vs" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

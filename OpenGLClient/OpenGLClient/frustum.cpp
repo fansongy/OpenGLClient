@@ -9,7 +9,7 @@ Frustum:: Frustum()
 void Frustum::InitProgram()
 {
 	mProgram= CreateGPUProgram("res/shader/WhiteColor.vs", "res/shader/WhiteColor.fs");
-	mPLocation= glGetAttribLocation(mProgram, "pos");
+	mPosLocation= glGetAttribLocation(mProgram, "pos");
 
 	mMLocation = glGetUniformLocation(mProgram, "M");
 	mVLocation = glGetUniformLocation(mProgram, "V");
@@ -39,6 +39,31 @@ void Frustum::InitPerspective(float fov,float aspect ,float zNear,float zFar)
 		xFar,-yFar,-zFar,
 		xFar,yFar,-zFar,
 		-xFar,yFar,-zFar,
+	};
+
+	mVBO = CreateBufferObject(GL_ARRAY_BUFFER,sizeof(float)*24,GL_STATIC_DRAW,vertexs);
+	unsigned int indexes[] = {
+		0,1,1,2,2,3,3,0, //near plane
+		4,5,5,6,6,7,7,4, //far plane
+		0,4,3,7,2,6,1,5, //connect
+	};
+	mIBO = CreateBufferObject(GL_ELEMENT_ARRAY_BUFFER,sizeof(unsigned int)*24,GL_STATIC_DRAW,indexes);
+}
+
+void Frustum::InitOrtho(float left,float right,float top,float bottom,float zNear,float zFar)
+{
+	//near
+
+	float vertexs[24] = {
+		left,bottom,-zNear,
+		right,bottom,-zNear,
+		right,top,-zNear,
+		left,top,-zNear,
+
+		left,bottom,-zFar,
+		right,bottom,-zFar,
+		right,top,-zFar,
+		left,top,-zFar,
 	};
 
 	mVBO = CreateBufferObject(GL_ARRAY_BUFFER,sizeof(float)*24,GL_STATIC_DRAW,vertexs);

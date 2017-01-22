@@ -1,6 +1,7 @@
 #include "misc.h"
 #include <stdio.h>
 #include <string.h>
+#include <windows.h>
 
 GLuint CreateBufferObject(GLenum bufferType,GLsizeiptr size,GLenum usage,void* data)
 {
@@ -125,6 +126,38 @@ static unsigned char* DecodeBMPData(unsigned char* imageData,int&width,int& heig
 	return pixelData;
 }
 
+GLuint SaveImage(const char* imagePath,unsigned char* imgData,int width,int height)
+{
+	FILE* pFile = fopen(imagePath,"wb");
+	if (pFile)
+	{
+		BITMAPFILEHEADER bfh;
+		memset(&bfh,0,sizeof(BITMAPFILEHEADER));
+		bfh.bfType = 0x4D42;
+		bfh.bfSize = sizeof(BITMAPFILEHEADER)+sizeof(BITMAPINFOHEADER)+width*height*3;
+		bfh.bfOffBits = sizeof(BITMAPFILEHEADER)+sizeof(BITMAPINFOHEADER);
+		fwrite(&bfh,sizeof(BITMAPFILEHEADER),1,pFile);
+		BITMAPINFOHEADER bih;
+		memset(&bih,0,sizeof(BITMAPINFOHEADER));
+		bih.biWidth = width;
+		bih.biHeight = height;
+		bih.biBitCount = 24;
+		bih.biSize = sizeof(BITMAPINFOHEADER);
+		fwrite(&bih,sizeof(BITMAPINFOHEADER),1,pFile);
+		unsigned char temp = 0;
+		for(int i = 0;i<width*height*3;i+=3)
+		{
+			//bgr->rgb
+			temp = imgData[i+2];
+			imgData[i+2] = imgData[i];
+			imgData[i] = temp;
+		}
+		fwrite(imgData,1,width*height*3,pFile);
+		fclose(pFile);
+	}
+	return 0;
+}
+
 const unsigned long	 FORMATE_DXT1 = 0x31545844l; //DXT1-> 1 T X D
 
 static unsigned char* DecodeDXT1Data(unsigned char* imageData,int&width,int& height,int& pixelSize)
@@ -144,7 +177,7 @@ static unsigned char* DecodeDXT1Data(unsigned char* imageData,int&width,int& hei
 		break;
 	}
 	unsigned char* pixelData = new unsigned char[pixelSize];
-	memcpy(pixelData,(imageData+sizeof(unsigned long)*10),pixelSize);
+	memcpy(pixelData,(imageData+sizeof(unsigned long)*32),pixelSize);
 
 	return pixelData;
 }
@@ -191,6 +224,39 @@ GLuint CreateTextureFromFile(const char* imagePath)
 		glCompressedTexImage2D(GL_TEXTURE_2D,0,srcForamte,width,heigh,0,pixelDataSize,pixelData);
 	}
 	glBindBuffer(GL_TEXTURE_2D,0);
+	//SaveImage("res/texture/test.bmp",pixelData,width,heigh);
 	delete imageData;
 	return texture;
+}
+void CheckGLError(const char* file,int line)
+{
+
+	GLenum error = glGetError();
+	if(error != GL_NO_ERROR)
+	{
+		switch (error)
+		{
+		case GL_INVALID_ENUM:
+			printf("GL Error: GL_INVALID_ENUM %s : %d \n",file,line);
+			break;
+		case GL_INVALID_VALUE:
+			printf("GL Error: GL_INVALID_VALUE %s : %d \n",file,line);
+			break;
+		case GL_INVALID_OPERATION:
+			printf("GL Error: GL_INVALID_OPERATION %s : %d \n",file,line);
+			break;
+		case GL_STACK_OVERFLOW:
+			printf("GL Error: GL_STACK_OVERFLOW %s : %d \n",file,line);
+			break;
+		case GL_STACK_UNDERFLOW:
+			printf("GL Error: GL_STACK_UNDERFLOW %s : %d \n",file,line);
+			break;
+		case GL_OUT_OF_MEMORY:
+			printf("GL Error: GL_OUT_OF_MEMORY %s : %d \n",file,line);
+			break;
+		default:
+			printf("GL Error: 0x%x %s : %d \n",error,file,line);
+			break;
+		}
+	}
 }
