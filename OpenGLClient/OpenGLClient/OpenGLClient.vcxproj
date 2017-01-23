@@ -93,6 +93,8 @@
     <ClInclude Include="timer.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="res\shader\diffuse.fs" />
+    <None Include="res\shader\diffuse.vs" />
     <None Include="res\shader\draw.fs" />
     <None Include="res\shader\draw.vs" />
     <None Include="res\shader\PointSprite.fs" />

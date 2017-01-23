@@ -1,8 +1,10 @@
 #pragma once
 
 #include "glew.h"
+#include <functional>
 
 GLuint CreateBufferObject(GLenum bufferType,GLsizeiptr size,GLenum usage,void* data);
+GLuint CreateVAOWithVBOSettings(std::function<void()> settings); 
 
 char *LoadFileContent(const char* path);
 GLuint CompileShader(GLenum shaderType,const char* shaderPath);

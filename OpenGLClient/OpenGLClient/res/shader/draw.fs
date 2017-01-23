@@ -1,13 +1,24 @@
-uniform vec4 U_AmbientLightColor;
-uniform vec4 U_AmbientMaterial;
-
-uniform sampler2D U_MainTexture;
+#version 400 core
 
 varying vec3 V_Normal;
 varying vec3 V_WorldPos;
 varying vec2 V_Texcoord;
 
-void main()
+subroutine vec4 SurfaceColor();
+uniform sampler2D U_MainTexture;
+subroutine uniform SurfaceColor U_SurfaceColor;
+
+
+subroutine (SurfaceColor) vec4 Ambient()
+{
+    vec4 AmbientLightColor = vec4(0.2,0.2,0.2,1.0);
+    vec4 AmbientMaterial = vec4(0.2,0.2,0.2,1.0);
+    
+    vec4 ambientColor = AmbientLightColor * AmbientMaterial;
+    return ambientColor*texture2D(U_MainTexture,V_Texcoord);
+}
+
+subroutine (SurfaceColor) vec4 Diffuse()
 {
     vec3 lightPos = vec3(10.0,10.0,0.0);
     vec3 L = lightPos;
@@ -16,10 +27,32 @@ void main()
     vec3 n = normalize(V_Normal);
 
     //ambient
-    U_AmbientLightColor = vec4(0.2,0.2,0.2,1.0);
-    U_AmbientMaterial = vec4(0.2,0.2,0.2,1.0);
+    vec4 AmbientLightColor = vec4(0.2,0.2,0.2,1.0);
+    vec4 AmbientMaterial = vec4(0.2,0.2,0.2,1.0);
     
-    vec4 ambientColor = U_AmbientLightColor * U_AmbientMaterial;
+    vec4 ambientColor = AmbientLightColor *  AmbientMaterial;
+    
+    //diffuse
+    vec4 DiffuseLightColor = vec4(1.0,1.0,1.0,1.0);
+    vec4 DiffuseMaterial = vec4(0.8,0.8,0.8,1.0);
+    vec4 diffuseColor = DiffuseLightColor * DiffuseMaterial * max(0.0,dot(L,n));
+
+    return ambientColor+texture2D(U_MainTexture,V_Texcoord)*diffuseColor;
+}
+
+subroutine (SurfaceColor) vec4 Specular()
+{
+  vec3 lightPos = vec3(10.0,10.0,0.0);
+    vec3 L = lightPos;
+
+    L = normalize(L);
+    vec3 n = normalize(V_Normal);
+
+    //ambient
+    vec4 AmbientLightColor = vec4(0.2,0.2,0.2,1.0);
+    vec4 AmbientMaterial = vec4(0.2,0.2,0.2,1.0);
+    
+    vec4 ambientColor = AmbientLightColor * AmbientMaterial;
     
     //diffuse
     vec4 DiffuseLightColor = vec4(1.0,1.0,1.0,1.0);
@@ -36,12 +69,13 @@ void main()
 
     if(diffuseColor.r == 0.0)
     {
-        gl_FragColor= texture2D(U_MainTexture,V_Texcoord)*(ambientColor+diffuseColor);
+        specularColor = vec4(0.0);
     }
-    else
-    {
-        gl_FragColor= ambientColor+texture2D(U_MainTexture,V_Texcoord)*diffuseColor+specularColor;
-    }
+    return ambientColor+diffuseColor*texture2D(U_MainTexture,V_Texcoord)+specularColor;
+   
+}
 
-
+void main()
+{
+    gl_FragColor = U_SurfaceColor();
 }

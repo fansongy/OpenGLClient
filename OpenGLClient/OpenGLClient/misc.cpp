@@ -230,7 +230,6 @@ GLuint CreateTextureFromFile(const char* imagePath)
 }
 void CheckGLError(const char* file,int line)
 {
-
 	GLenum error = glGetError();
 	if(error != GL_NO_ERROR)
 	{
@@ -259,4 +258,14 @@ void CheckGLError(const char* file,int line)
 			break;
 		}
 	}
+}
+
+GLuint CreateVAOWithVBOSettings(std::function<void()> settings)
+{
+	GLuint vao;
+	glGenVertexArrays(1,&vao);
+	glBindVertexArray(vao);
+	settings();
+	glBindVertexArray(0);
+	return vao;
 }

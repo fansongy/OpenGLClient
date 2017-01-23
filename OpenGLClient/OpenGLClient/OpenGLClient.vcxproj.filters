@@ -70,5 +70,11 @@
     <None Include="res\shader\WhiteColor.fs">
       <Filter>源文件</Filter>
     </None>
+    <None Include="res\shader\diffuse.fs">
+      <Filter>源文件</Filter>
+    </None>
+    <None Include="res\shader\diffuse.vs">
+      <Filter>源文件</Filter>
+    </None>
   </ItemGroup>
 </Project>

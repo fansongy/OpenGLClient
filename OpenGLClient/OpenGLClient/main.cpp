@@ -75,24 +75,30 @@ INT WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
 	glewInit();
 
-	GLuint program = CreateGPUProgram("res/shader/PointSprite.vs", "res/shader/PointSprite.fs");
-	GLint posLocation, texcoordLocation,normalLocation, MLocation, VLocation, PLocation,NMLocation,textureLocation;
+	GLuint program = CreateGPUProgram("res/shader/draw.vs", "res/shader/draw.fs");
+	GLint posLocation, texcoordLocation,normalLocation, MLocation, VLocation, PLocation,NMLocation,textureLocation,offsetLocation,surfaceColorLocation;
 	posLocation = glGetAttribLocation(program, "pos");
 	texcoordLocation = glGetAttribLocation(program, "texcoord");
 	normalLocation = glGetAttribLocation(program, "normal");
+	offsetLocation = glGetAttribLocation(program, "offset");
 
 	MLocation = glGetUniformLocation(program, "M");
 	VLocation = glGetUniformLocation(program, "V");
 	PLocation = glGetUniformLocation(program, "P");
 	NMLocation = glGetUniformLocation(program, "NM");
 	textureLocation = glGetUniformLocation(program, "U_MainTexture");
+	surfaceColorLocation = glGetSubroutineUniformLocation(program,GL_FRAGMENT_SHADER,"U_SurfaceColor");
+
+	GLuint ambientLightIndex = glGetSubroutineIndex(program,GL_FRAGMENT_SHADER,"Ambient");
+	GLuint diffuseLightIndex = glGetSubroutineIndex(program,GL_FRAGMENT_SHADER,"Diffuse");
+	GLuint specularLightIndex = glGetSubroutineIndex(program,GL_FRAGMENT_SHADER,"Specular");
 
 	// load obj model :  vertexes、vertex count、indexes、index count
 	unsigned int *indexes = nullptr;
 	int vertexCount = 0, indexCount = 0;
 	Timer t;
 	t.Start();
-	VertexData*vertexes = LoadObjModel("res/model/Quad.obj", &indexes, vertexCount, indexCount);
+	VertexData*vertexes = LoadObjModel("res/model/niutou.obj", &indexes, vertexCount, indexCount);
 	printf("Load model cost %fs\n",t.GetPassedTime());
 	if (vertexes==nullptr)
 	{
@@ -122,14 +128,35 @@ INT WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	vertexes[0].position[0] = 0;
 	vertexes[0].position[1] = 0;
 
+	GLuint vao = CreateVAOWithVBOSettings([&]()->void
+	{
+		GLuint vbo = CreateBufferObject(GL_ARRAY_BUFFER, sizeof(VertexData) * vertexCount, GL_STATIC_DRAW, vertexes);
+		glBindBuffer(GL_ARRAY_BUFFER, vbo);
+		glEnableVertexAttribArray(posLocation);
+		glVertexAttribPointer(posLocation, 3, GL_FLOAT, GL_FALSE, sizeof(VertexData), (void*)0);
+		glEnableVertexAttribArray(texcoordLocation);
+		glVertexAttribPointer(texcoordLocation, 2, GL_FLOAT, GL_FALSE, sizeof(VertexData), (void*)(sizeof(float) * 3));
+		glEnableVertexAttribArray(normalLocation);
+		glVertexAttribPointer(normalLocation, 3, GL_FLOAT, GL_FALSE, sizeof(VertexData), (void*)(sizeof(float) * 5));
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+	});
+
+
 	//obj model -> vbo & ibo
-	GLuint vbo = CreateBufferObject(GL_ARRAY_BUFFER, sizeof(VertexData) * vertexCount, GL_STATIC_DRAW, vertexes);
 	GLuint ibo = CreateBufferObject(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * indexCount, GL_STATIC_DRAW, indexes);
-	GLuint mainTexture = CreateTextureFromFile("res/texture/camera.dds");
+	GLuint mainTexture = CreateTextureFromFile("res/texture/niutou.bmp");
 	printf("vertex count %d index count %d\n",vertexCount,indexCount);
+
+	float posOffset[] = {
+		-1.0f,0.0f,0.0f,
+		0.0f,0.0f,0.0f,
+		1.0f,0.0f,0.0f,
+	};
+	GLuint offsetVBO = CreateBufferObject(GL_ARRAY_BUFFER,sizeof(float)*9,GL_STATIC_DRAW,posOffset);
 
 	glClearColor(0.1f, 0.4f, 0.7f,1.0f);
 	glEnable(GL_DEPTH_TEST);
+	GL_CALL(glEnable(GL_DEPTH_TEST));
 	ShowWindow(hwnd, SW_SHOW);
 	UpdateWindow(hwnd);
 
@@ -147,18 +174,17 @@ INT WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	};
 
 
-	glm::mat4 model = glm::translate(-1.0f,0.0f,-3.0f)* glm::rotate(-20.0f,0.0f,1.0f,0.0f);
+	glm::mat4 model = glm::translate(0.0f,-0.5f,-4.0f)*glm::rotate(-90.0f,0.0f,1.0f,0.0f)*glm::scale(0.01f,0.01f,0.01f);
 	glm::mat4 projection = glm::perspective(45.0f, (float)width / (float)height, 0.1f, 1000.0f);
 	//glm::mat4 uiMatrix = glm::ortho(-400.0f, 400.0f,-300.0f,300.0f);
 	glm::mat4 normalMatrix = glm::inverseTranspose(model);
 
 	Frustum	frustum;
 	frustum.InitProgram();
-	frustum.InitOrtho(-0.5f,0.5f,-0.5f,0.5f,0.1f,4.0f);
-	//frustum.InitPerspective(45.0f, (float)width / (float)height, 0.1f,4.0f);
+	//frustum.InitOrtho(-0.5f,0.5f,-0.5f,0.5f,0.1f,4.0f);
+	frustum.InitPerspective(45.0f, (float)width / (float)height, 0.1f,4.0f);
 
 	MSG msg;
-
 	auto draw = [&]()-> void
 	{
 		glUseProgram(program); 
@@ -170,18 +196,38 @@ INT WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 		glBindTexture(GL_TEXTURE_2D, mainTexture);
 		glUniform1i(texcoordLocation, 0);
 
-		glBindBuffer(GL_ARRAY_BUFFER, vbo);
-		glEnableVertexAttribArray(posLocation);
-		glVertexAttribPointer(posLocation, 3, GL_FLOAT, GL_FALSE, sizeof(VertexData), (void*)0);
-		glEnableVertexAttribArray(texcoordLocation);
-		glVertexAttribPointer(texcoordLocation, 2, GL_FLOAT, GL_FALSE, sizeof(VertexData), (void*)(sizeof(float) * 3));
-		glEnableVertexAttribArray(normalLocation);
-		glVertexAttribPointer(normalLocation, 3, GL_FLOAT, GL_FALSE, sizeof(VertexData), (void*)(sizeof(float) * 5));
+		glBindVertexArray(vao);
 
+		glBindBuffer(GL_ARRAY_BUFFER, offsetVBO);
+		glEnableVertexAttribArray(offsetLocation);
+		glVertexAttribPointer(offsetLocation, 3, GL_FLOAT, GL_FALSE, sizeof(float)*3, (void*)0);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
-		glDrawElements(GL_POINTS, 1, GL_UNSIGNED_INT, 0);
+		glVertexAttribDivisor(offsetLocation,1);
+
+		model = glm::translate(-1.0f,-0.5f,-4.0f)*glm::rotate(-90.0f,0.0f,1.0f,0.0f)*glm::scale(0.01f,0.01f,0.01f);
+		glUniformMatrix4fv(MLocation, 1, GL_FALSE, glm::value_ptr(model));
+		glUniformSubroutinesuiv(GL_FRAGMENT_SHADER,1,&ambientLightIndex);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,ibo);
+		glDrawElements(GL_TRIANGLES,indexCount,GL_UNSIGNED_INT,0);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+		model = glm::translate(0.0f,-0.5f,-4.0f)*glm::rotate(-90.0f,0.0f,1.0f,0.0f)*glm::scale(0.01f,0.01f,0.01f);
+		glUniformMatrix4fv(MLocation, 1, GL_FALSE, glm::value_ptr(model));
+		glUniformSubroutinesuiv(GL_FRAGMENT_SHADER,1,&diffuseLightIndex);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,ibo);
+		glDrawElements(GL_TRIANGLES,indexCount,GL_UNSIGNED_INT,0);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+		model = glm::translate(1.0f,-0.5f,-4.0f)*glm::rotate(-90.0f,0.0f,1.0f,0.0f)*glm::scale(0.01f,0.01f,0.01f);
+		glUniformMatrix4fv(MLocation, 1, GL_FALSE, glm::value_ptr(model));
+		glUniformSubroutinesuiv(GL_FRAGMENT_SHADER,1,&specularLightIndex);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,ibo);
+		glDrawElements(GL_TRIANGLES,indexCount,GL_UNSIGNED_INT,0);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+		//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
+		//glDrawElementsInstanced(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, 0,3);
+		//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 		glUseProgram(0);
 	};
 	while (true)
@@ -196,9 +242,11 @@ INT WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 			DispatchMessage(&msg);
 		}
 		glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
-		frustum.Draw(glm::value_ptr(model),identity,glm::value_ptr(projection));
-
+		//frustum.Draw(glm::value_ptr(model),identity,glm::value_ptr(projection));
+		//t.Start();
 		draw();
+		glFlush();
+		//printf("Time: %fs\n",t.GetPassedTime());
 		//glEnable(GL_SCISSOR_TEST);
 		//glScissor(0,0,width,100);
 		//draw();
