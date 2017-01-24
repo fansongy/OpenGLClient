@@ -101,6 +101,11 @@
     <None Include="res\shader\MixLightMT.vs" />
     <None Include="res\shader\PointSprite.fs" />
     <None Include="res\shader\PointSprite.vs" />
+    <None Include="res\shader\simple.compute" />
+    <None Include="res\shader\tfo_translateM.fs" />
+    <None Include="res\shader\tfo_translateM.vs" />
+    <None Include="res\shader\tfo_translateScreen.fs" />
+    <None Include="res\shader\tfo_translateScreen.vs" />
     <None Include="res\shader\UI.fs" />
     <None Include="res\shader\UI.vs" />
     <None Include="res\shader\UIFullScreenQuad.vs" />

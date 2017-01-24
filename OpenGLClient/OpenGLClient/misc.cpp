@@ -109,7 +109,37 @@ GLuint CreateGPUProgram(const char* vsShaderPath,const char* fsShaderPath)
 	return program;
 }
 
-static unsigned char* DecodeBMPData(unsigned char* imageData,int&width,int& heigh)
+GLuint CreateComputeProgram(const char* ComputeShaderPath)
+{
+	GLuint vsShader = CompileShader(GL_COMPUTE_SHADER,ComputeShaderPath);
+
+	//Attach
+	GLuint program = glCreateProgram();
+	glAttachShader(program,vsShader);
+
+	//Link
+	glLinkProgram(program);
+
+	//Clear
+	glDetachShader(program,vsShader);
+	glDeleteShader(vsShader);
+
+	//check error
+	GLint linkResult = GL_TRUE;
+	glGetProgramiv(program,GL_LINK_STATUS,&linkResult);
+	if(linkResult == GL_FALSE){
+		char szLog[1024] = {0};
+		GLsizei logLen = 0;
+		glGetProgramInfoLog(program,1024,&logLen,szLog);
+		printf("Link program fail error log: %s \nvs shader code:\n%s\nfs ",szLog,ComputeShaderPath);
+		glDeleteShader(program);
+		program = 0;
+	}
+
+	return program;
+}
+
+unsigned char* DecodeBMPData(unsigned char* imageData,int&width,int& heigh)
 {
 	//decode bmp
 	int pixelDataOffset =*((int*)(imageData+10));

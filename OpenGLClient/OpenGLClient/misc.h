@@ -10,8 +10,10 @@ GLuint CreateFrameBufferObject(GLuint &colorBuffer,GLuint &depthBuffer,int width
 char *LoadFileContent(const char* path);
 GLuint CompileShader(GLenum shaderType,const char* shaderPath);
 GLuint CreateGPUProgram(const char* vsShaderPath,const char* fsShaderPath);
+GLuint CreateComputeProgram(const char* ComputeShaderPath);
 GLuint CreateTextureFromFile(const char* imagePath);
-GLuint SaveImage(const char* imagePath,unsigned char* imgData,int width,int height);
+GLuint SaveImage(const char* imagePath,unsigned char* imgData,int& width,int& height);
+unsigned char* DecodeBMPData(unsigned char* imageData,int&width,int& heigh);
 
 void CheckGLError(const char* file,int line);
 #define  GL_CALL(x) do{x;CheckGLError(__FILE__,__LINE__);}while(0)

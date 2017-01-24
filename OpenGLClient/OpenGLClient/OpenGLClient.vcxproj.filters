@@ -94,5 +94,20 @@
     <None Include="res\shader\UIFullScreenQuad.vs">
       <Filter>源文件\shader</Filter>
     </None>
+    <None Include="res\shader\simple.compute">
+      <Filter>源文件\shader</Filter>
+    </None>
+    <None Include="res\shader\tfo_translateScreen.fs">
+      <Filter>源文件\shader</Filter>
+    </None>
+    <None Include="res\shader\tfo_translateScreen.vs">
+      <Filter>源文件\shader</Filter>
+    </None>
+    <None Include="res\shader\tfo_translateM.fs">
+      <Filter>源文件\shader</Filter>
+    </None>
+    <None Include="res\shader\tfo_translateM.vs">
+      <Filter>源文件\shader</Filter>
+    </None>
   </ItemGroup>
 </Project>
