@@ -269,3 +269,54 @@ GLuint CreateVAOWithVBOSettings(std::function<void()> settings)
 	glBindVertexArray(0);
 	return vao;
 }
+
+GLuint CreateFrameBufferObject(GLuint &colorBuffer,GLuint &depthBuffer,int width,int height,GLuint *colorBuffer2)
+{
+	GLuint fbo;
+	glGenFramebuffers(1,&fbo);
+	glBindFramebuffer(GL_FRAMEBUFFER,fbo);
+	
+	//color buffer
+	glGenTextures(1,&colorBuffer);
+	glBindTexture(GL_TEXTURE_2D,colorBuffer);
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_CLAMP_TO_EDGE);
+	glTexImage2D(GL_TEXTURE_2D,0,GL_RGBA,width,height,0,GL_RGBA,GL_UNSIGNED_BYTE,nullptr);
+	glFramebufferTexture2D(GL_FRAMEBUFFER,GL_COLOR_ATTACHMENT0,GL_TEXTURE_2D,colorBuffer,0);
+	glBindTexture(GL_TEXTURE_2D,0);
+
+	if (colorBuffer2 != nullptr)
+	{
+		glGenTextures(1,colorBuffer2);
+		glBindTexture(GL_TEXTURE_2D,*colorBuffer2);
+		glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_CLAMP_TO_EDGE);
+		glTexImage2D(GL_TEXTURE_2D,0,GL_RGBA,width,height,0,GL_RGBA,GL_UNSIGNED_BYTE,nullptr);
+		glFramebufferTexture2D(GL_FRAMEBUFFER,GL_COLOR_ATTACHMENT1,GL_TEXTURE_2D,*colorBuffer2,0);
+		GLenum buffers[] = {GL_COLOR_ATTACHMENT0,GL_COLOR_ATTACHMENT1};
+		glDrawBuffers(2,buffers);
+	}
+
+	//depth buffer
+	glGenTextures(1,&depthBuffer);
+	glBindTexture(GL_TEXTURE_2D,depthBuffer);
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_CLAMP_TO_EDGE);
+	glTexImage2D(GL_TEXTURE_2D,0,GL_DEPTH_COMPONENT,width,height,0,GL_DEPTH_COMPONENT,GL_FLOAT,nullptr);
+	glFramebufferTexture2D(GL_FRAMEBUFFER,GL_DEPTH_ATTACHMENT,GL_TEXTURE_2D,depthBuffer,0);
+	glBindTexture(GL_TEXTURE_2D,0);
+
+	GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+	if(status !=GL_FRAMEBUFFER_COMPLETE)
+	{
+		printf("create frame buffer object fail\n");
+	}
+	glBindFramebuffer(GL_FRAMEBUFFER,0);
+	return fbo;
+}

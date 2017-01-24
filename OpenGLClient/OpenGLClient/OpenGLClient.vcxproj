@@ -97,10 +97,15 @@
     <None Include="res\shader\diffuse.vs" />
     <None Include="res\shader\draw.fs" />
     <None Include="res\shader\draw.vs" />
+    <None Include="res\shader\MixLightMT.fs" />
+    <None Include="res\shader\MixLightMT.vs" />
     <None Include="res\shader\PointSprite.fs" />
     <None Include="res\shader\PointSprite.vs" />
     <None Include="res\shader\UI.fs" />
     <None Include="res\shader\UI.vs" />
+    <None Include="res\shader\UIFullScreenQuad.vs" />
+    <None Include="res\shader\ViewDepthMap.fs" />
+    <None Include="res\shader\ViewDepthMap.vs" />
     <None Include="res\shader\WhiteColor.fs" />
     <None Include="res\shader\WhiteColor.vs" />
   </ItemGroup>
