@@ -10,6 +10,53 @@
       <Platform>Win32</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="FBO.h" />
+    <ClInclude Include="FullScreenQuad.h" />
+    <ClInclude Include="glew.h" />
+    <ClInclude Include="GPUProgram.h" />
+    <ClInclude Include="ObjModel.h" />
+    <ClInclude Include="utils.h" />
+    <ClInclude Include="wglew.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="FBO.cpp" />
+    <ClCompile Include="FullScreenQuad.cpp" />
+    <ClCompile Include="GPUProgram.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="ObjModel.cpp" />
+    <ClCompile Include="utils.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="res\shader\ambient.fs" />
+    <None Include="res\shader\ambient.vs" />
+    <None Include="res\shader\diffuse_fs.fs" />
+    <None Include="res\shader\diffuse_fs.vs" />
+    <None Include="res\shader\diffuse_vs.fs" />
+    <None Include="res\shader\diffuse_vs.vs" />
+    <None Include="res\shader\Dilation.fs" />
+    <None Include="res\shader\Dilation.vs" />
+    <None Include="res\shader\DirectionLight.fs" />
+    <None Include="res\shader\DirectionLight.vs" />
+    <None Include="res\shader\Erosion.fs" />
+    <None Include="res\shader\Erosion.vs" />
+    <None Include="res\shader\fog.fs" />
+    <None Include="res\shader\fog.vs" />
+    <None Include="res\shader\fullscreenquad.fs" />
+    <None Include="res\shader\fullscreenquad.vs" />
+    <None Include="res\shader\Light.fs" />
+    <None Include="res\shader\Light.vs" />
+    <None Include="res\shader\LightSource.fs" />
+    <None Include="res\shader\LightSource.vs" />
+    <None Include="res\shader\PointLight.fs" />
+    <None Include="res\shader\PointLight.vs" />
+    <None Include="res\shader\sample.fs" />
+    <None Include="res\shader\sample.vs" />
+    <None Include="res\shader\specular_fs.fs" />
+    <None Include="res\shader\specular_fs.vs" />
+    <None Include="res\shader\SpotLight.fs" />
+    <None Include="res\shader\SpotLight.vs" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{22770D47-0A43-477C-B1EF-E074F681A7A1}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
@@ -79,41 +126,6 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClCompile Include="frustum.cpp" />
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="misc.cpp" />
-    <ClCompile Include="model.cpp" />
-    <ClCompile Include="timer.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="frustum.h" />
-    <ClInclude Include="misc.h" />
-    <ClInclude Include="model.h" />
-    <ClInclude Include="timer.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="res\shader\diffuse.fs" />
-    <None Include="res\shader\diffuse.vs" />
-    <None Include="res\shader\draw.fs" />
-    <None Include="res\shader\draw.vs" />
-    <None Include="res\shader\MixLightMT.fs" />
-    <None Include="res\shader\MixLightMT.vs" />
-    <None Include="res\shader\PointSprite.fs" />
-    <None Include="res\shader\PointSprite.vs" />
-    <None Include="res\shader\simple.compute" />
-    <None Include="res\shader\tfo_translateM.fs" />
-    <None Include="res\shader\tfo_translateM.vs" />
-    <None Include="res\shader\tfo_translateScreen.fs" />
-    <None Include="res\shader\tfo_translateScreen.vs" />
-    <None Include="res\shader\UI.fs" />
-    <None Include="res\shader\UI.vs" />
-    <None Include="res\shader\UIFullScreenQuad.vs" />
-    <None Include="res\shader\ViewDepthMap.fs" />
-    <None Include="res\shader\ViewDepthMap.vs" />
-    <None Include="res\shader\WhiteColor.fs" />
-    <None Include="res\shader\WhiteColor.vs" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

@@ -13,101 +13,134 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="源文件\shader">
-      <UniqueIdentifier>{1ac50457-b4d1-489f-824f-bc035b504206}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="GPUProgram.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjModel.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="utils.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="wglew.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="FBO.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="FullScreenQuad.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="glew.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="FullScreenQuad.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="GPUProgram.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
     <ClCompile Include="main.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="misc.cpp">
+    <ClCompile Include="ObjModel.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="model.cpp">
+    <ClCompile Include="utils.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="timer.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="frustum.cpp">
+    <ClCompile Include="FBO.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="misc.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="model.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="timer.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="frustum.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="res\shader\diffuse.fs">
-      <Filter>源文件\shader</Filter>
+    <None Include="res\shader\diffuse_vs.vs">
+      <Filter>资源文件</Filter>
     </None>
-    <None Include="res\shader\diffuse.vs">
-      <Filter>源文件\shader</Filter>
+    <None Include="res\shader\DirectionLight.fs">
+      <Filter>资源文件</Filter>
     </None>
-    <None Include="res\shader\draw.fs">
-      <Filter>源文件\shader</Filter>
+    <None Include="res\shader\DirectionLight.vs">
+      <Filter>资源文件</Filter>
     </None>
-    <None Include="res\shader\draw.vs">
-      <Filter>源文件\shader</Filter>
+    <None Include="res\shader\fullscreenquad.fs">
+      <Filter>资源文件</Filter>
     </None>
-    <None Include="res\shader\MixLightMT.fs">
-      <Filter>源文件\shader</Filter>
+    <None Include="res\shader\fullscreenquad.vs">
+      <Filter>资源文件</Filter>
     </None>
-    <None Include="res\shader\MixLightMT.vs">
-      <Filter>源文件\shader</Filter>
+    <None Include="res\shader\sample.fs">
+      <Filter>资源文件</Filter>
     </None>
-    <None Include="res\shader\PointSprite.fs">
-      <Filter>源文件\shader</Filter>
+    <None Include="res\shader\sample.vs">
+      <Filter>资源文件</Filter>
     </None>
-    <None Include="res\shader\PointSprite.vs">
-      <Filter>源文件\shader</Filter>
+    <None Include="res\shader\specular_fs.fs">
+      <Filter>资源文件</Filter>
     </None>
-    <None Include="res\shader\UI.fs">
-      <Filter>源文件\shader</Filter>
+    <None Include="res\shader\specular_fs.vs">
+      <Filter>资源文件</Filter>
     </None>
-    <None Include="res\shader\UI.vs">
-      <Filter>源文件\shader</Filter>
+    <None Include="res\shader\ambient.fs">
+      <Filter>资源文件</Filter>
     </None>
-    <None Include="res\shader\ViewDepthMap.fs">
-      <Filter>源文件\shader</Filter>
+    <None Include="res\shader\ambient.vs">
+      <Filter>资源文件</Filter>
     </None>
-    <None Include="res\shader\ViewDepthMap.vs">
-      <Filter>源文件\shader</Filter>
+    <None Include="res\shader\diffuse_fs.fs">
+      <Filter>资源文件</Filter>
     </None>
-    <None Include="res\shader\WhiteColor.fs">
-      <Filter>源文件\shader</Filter>
+    <None Include="res\shader\diffuse_fs.vs">
+      <Filter>资源文件</Filter>
     </None>
-    <None Include="res\shader\WhiteColor.vs">
-      <Filter>源文件\shader</Filter>
+    <None Include="res\shader\diffuse_vs.fs">
+      <Filter>资源文件</Filter>
     </None>
-    <None Include="res\shader\UIFullScreenQuad.vs">
-      <Filter>源文件\shader</Filter>
+    <None Include="res\shader\PointLight.fs">
+      <Filter>资源文件</Filter>
     </None>
-    <None Include="res\shader\simple.compute">
-      <Filter>源文件\shader</Filter>
+    <None Include="res\shader\PointLight.vs">
+      <Filter>资源文件</Filter>
     </None>
-    <None Include="res\shader\tfo_translateScreen.fs">
-      <Filter>源文件\shader</Filter>
+    <None Include="res\shader\SpotLight.fs">
+      <Filter>资源文件</Filter>
     </None>
-    <None Include="res\shader\tfo_translateScreen.vs">
-      <Filter>源文件\shader</Filter>
+    <None Include="res\shader\SpotLight.vs">
+      <Filter>资源文件</Filter>
     </None>
-    <None Include="res\shader\tfo_translateM.fs">
-      <Filter>源文件\shader</Filter>
+    <None Include="res\shader\Light.fs">
+      <Filter>资源文件</Filter>
     </None>
-    <None Include="res\shader\tfo_translateM.vs">
-      <Filter>源文件\shader</Filter>
+    <None Include="res\shader\Light.vs">
+      <Filter>资源文件</Filter>
+    </None>
+    <None Include="res\shader\Dilation.fs">
+      <Filter>资源文件</Filter>
+    </None>
+    <None Include="res\shader\Dilation.vs">
+      <Filter>资源文件</Filter>
+    </None>
+    <None Include="res\shader\Erosion.fs">
+      <Filter>资源文件</Filter>
+    </None>
+    <None Include="res\shader\Erosion.vs">
+      <Filter>资源文件</Filter>
+    </None>
+    <None Include="res\shader\LightSource.fs">
+      <Filter>资源文件</Filter>
+    </None>
+    <None Include="res\shader\LightSource.vs">
+      <Filter>资源文件</Filter>
+    </None>
+    <None Include="res\shader\fog.fs">
+      <Filter>资源文件</Filter>
+    </None>
+    <None Include="res\shader\fog.vs">
+      <Filter>资源文件</Filter>
     </None>
   </ItemGroup>
 </Project>
